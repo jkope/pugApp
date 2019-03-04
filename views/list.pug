@@ -1,0 +1,24 @@
+html
+    head
+        body
+            h1 List of Users
+            div()
+                a(href='./form', font-weight='bold',style={'background-color':'lightblue','padding':'5px'}) Add User
+            table(style={'table-layout':'fixed', 'width':'100%', 'border-collapse':'collapse', 'border':'3px solid blue'} )
+                tr
+                    th User ID
+                    th Name 
+                    th Age 
+                    th Email Address 
+                    th  
+                    th  
+                each user in list
+                    tr
+                        td=user.userId
+                        td=user.name 
+                        td=user.age
+                        td=user.email
+                        td
+                            a(href='./delete/'+ user.userId) Delete
+                        td
+                            a(href='./edit/'+user.userId) Edit 

@@ -1,0 +1,16 @@
+html
+    head
+        body
+            h1 Create New User
+            form(action="/create", method="post", id='form')
+                div
+                    label(form='name') Name
+                    input(name='name', type='text' id='name')
+                div
+                    label(form='age') Age
+                    input(name='age', type='number' id='age')
+                div
+                    label(form='email') Email
+                    input(name='email', type='email', id='email')
+                div
+                    input(type='submit', value='Add User')

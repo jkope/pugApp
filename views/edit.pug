@@ -1,0 +1,16 @@
+html
+    head
+        body
+            h1 Update Information for #{user.name} 
+            form(action="/update/"+user.userId, method="post", id='form')
+                div
+                    label(form='name') Name
+                    input(name='name', type='text' id='name', value=user.name)
+                div
+                    label(form='age') Age
+                    input(name='age', type='number' id='age', value=user.age)
+                div
+                    label(form='email') Email
+                    input(name='email', type='email', id='email', value=user.email)
+                div
+                    input(type='submit', value='Save')
