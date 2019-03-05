@@ -4,6 +4,13 @@ html
             h1 List of Users
             div()
                 a(href='./form', font-weight='bold',style={'background-color':'lightblue','padding':'5px'}) Add User
+                form(action="./search", method='post' id='form')
+                    div
+                        label(form='search') Search by Name:
+                        input(name='search', type='text' id='search')
+                        div
+                            input(type='submit', value='Search')
+                a(href='./', font-weight='bold',style={'background-color':'grey','padding':'5px'}) Clear Search
             table(style={'table-layout':'fixed', 'width':'100%', 'border-collapse':'collapse', 'border':'3px solid blue'} )
                 tr
                     th User ID
@@ -19,6 +26,7 @@ html
                         td=user.age
                         td=user.email
                         td
-                            a(href='./delete/'+ user.userId) Delete
+                            a(href='./delete/'+ user.uid) Delete
                         td
-                            a(href='./edit/'+user.userId) Edit 
+                            a(href='./edit/'+user.uid) Edit 
+            //- a(href='/logout') Log Out

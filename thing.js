@@ -44,7 +44,7 @@ router.route('/google/callback')
     failure: '/'
 }));
 
-router.route('google')
+router.route('/google')
 .get(passport.authenticate('google',{
     scope: ['profile']
 }))
@@ -54,7 +54,7 @@ app.use('/auth', router);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-app.get('/list', (req, res) => {
+app.get('/', (req, res) => {
     fs.readFile('./userlist.json', (err, data)=>{
         if (err) throw err;
         let userlist = JSON.parse(data);
@@ -62,16 +62,18 @@ app.get('/list', (req, res) => {
     })
 });
 
+
+
 app.get('/delete/:id', (req, res) => {
     let id = req.params.id
     fs.readFile('./userlist.json', (err, data) => {
         if (err) throw err;
         let userlist = JSON.parse(data);
-        let index = userlist.findIndex(user => user.userId === id);
+        let index = userlist.findIndex(user => user.uid === id);
         userlist.splice(index,1);
         fs.writeFile('./userlist.json', JSON.stringify(userlist, null, 2), (err) => {
             if (err) throw err;
-            res.redirect('/list')
+            res.redirect('/')
         })
     })
 })
@@ -81,22 +83,28 @@ app.get('/edit/:id', (req, res) => {
     fs.readFile('./userlist.json', (err, data) => {
         if (err) throw err;
         let userlist = JSON.parse(data);
-        let index = userlist.findIndex(user => user.userId === id);
+        let index = userlist.findIndex(user => user.uid === id);
         res.render('edit', {user: userlist[index]})
     })
 })
 
-app.get('/', (req, res) => {
-    res.render('index');
-})
+// app.get('/', (req, res) => {
+//     res.render('list');
+// })
 
 app.get('/form', (req, res) => {
     res.render('form');
 })
 
+// app.get('/logout', (req,res) => {
+//     req.logout();
+//     res.redirect('/');
+// })
+
 app.post('/create', (req, res) => {
     let user = {
-        userId: Math.floor(Math.random()*1000).toString(),
+        uid: Math.floor(Math.random()*1000).toString(),
+        userId: req.body.userID,
         name: req.body.name,
         email: req.body.email,
         age: req.body.age
@@ -107,15 +115,31 @@ app.post('/create', (req, res) => {
         userlist.push(user);
         fs.writeFile('./userlist.json', JSON.stringify(userlist,null,2), (err) => {
             if (err) throw err;
-            res.redirect('/list')
+            res.redirect('/')
         })
     });
 });
 
+app.post('/search', (req, res) => {
+        let searchTerm = req.body.search
+    fs.readFile('./userlist.json', (err, data) => {
+        if (err) throw err;
+        let userlist = JSON.parse(data);
+        let filteredList = [];
+        userlist.forEach(user => {
+            if(user.name === searchTerm){
+                filteredList.push(user);
+            }
+        })
+        res.render('list', { list: filteredList });
+    })
+});
+
 app.post('/update/:id', (req, res) => {
-    let id = req.params.id
+    let uid = req.params.id
     let user = {
-        userId: id,
+        uid: uid,
+        userId: req.body.userID,
         name: req.body.name,
         email: req.body.email,
         age: req.body.age
@@ -123,11 +147,11 @@ app.post('/update/:id', (req, res) => {
     fs.readFile('./userlist.json', (err, data) => {
         if (err) throw err;
         let userlist = JSON.parse(data);
-        let index = userlist.findIndex(user => user.userId === id);
+        let index = userlist.findIndex(user => user.uid === uid);
         userlist[index] = user;
         fs.writeFile('./userlist.json', JSON.stringify(userlist, null, 2), (err) => {
             if (err) throw err;
-            res.redirect('/list')
+            res.redirect('/')
         })
     });
 });

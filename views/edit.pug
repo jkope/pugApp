@@ -2,7 +2,10 @@ html
     head
         body
             h1 Update Information for #{user.name} 
-            form(action="/update/"+user.userId, method="post", id='form')
+            form(action="/update/"+user.uid, method="post", id='form')
+                div
+                    label(form='userID') User ID
+                    input(name='userID', type='text' id='userID' value=user.userId)
                 div
                     label(form='name') Name
                     input(name='name', type='text' id='name', value=user.name)
