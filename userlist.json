@@ -14,7 +14,7 @@
   {
     "userId": "634",
     "name": "Gilbert Kopenhefer",
-    "email": "Gil@gmail.com",
+    "email": "Gilbert@gmail.com",
     "age": "3"
   },
   {
@@ -25,14 +25,8 @@
   },
   {
     "userId": "779",
-    "name": "Jacob Kopenhefer",
+    "name": "Jake Kopenhefer",
     "email": "jacob@gmail.com",
     "age": "33"
-  },
-  {
-    "userId": "56",
-    "name": "pp",
-    "email": "ooo@gom",
-    "age": "43"
   }
 ]

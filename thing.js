@@ -1,15 +1,60 @@
 const express = require('express');
 const path =require('path');
 const fs = require('fs');
+const passport = require('passport');
+const session = require('express-session');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+const router = express.Router();
 
 let app = express();
 
 app.use(express.urlencoded({extended: false}));
 
+app.use(session({
+    secret: 'super secret',
+    saveUninitialized: false,
+    resave: false,
+    cookie: {maxAge: 6000000}
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser((user, done) => {
+    done(null, user);
+});
+passport.deserializeUser((user, done) => {
+    done(null, user);
+});
+
+passport.use(new GoogleStrategy({
+//options
+clientID:'332058658540-8er12kv1rjc1ut4pkn8pklcr74e350ve.apps.googleusercontent.com',
+clientSecret: 'EOUjH3cr-VusNi-D1q8Sg9pA',
+callbackURL: 'http://localhost:3000/auth/google/callback'
+}, (req, accessToken, refreshToken, profile, done) => {
+    //callback
+    done(null, profile);
+}));
+
+router.route('/google/callback')
+.get(passport.authenticate('google',{
+    successRedirect: '/list',
+    failure: '/'
+}));
+
+router.route('google')
+.get(passport.authenticate('google',{
+    scope: ['profile']
+}))
+
+app.use('/auth', router);
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-app.get('/', (req, res) => {
+app.get('/list', (req, res) => {
     fs.readFile('./userlist.json', (err, data)=>{
         if (err) throw err;
         let userlist = JSON.parse(data);
@@ -26,7 +71,7 @@ app.get('/delete/:id', (req, res) => {
         userlist.splice(index,1);
         fs.writeFile('./userlist.json', JSON.stringify(userlist, null, 2), (err) => {
             if (err) throw err;
-            res.redirect('/')
+            res.redirect('/list')
         })
     })
 })
@@ -39,6 +84,10 @@ app.get('/edit/:id', (req, res) => {
         let index = userlist.findIndex(user => user.userId === id);
         res.render('edit', {user: userlist[index]})
     })
+})
+
+app.get('/', (req, res) => {
+    res.render('index');
 })
 
 app.get('/form', (req, res) => {
@@ -58,7 +107,7 @@ app.post('/create', (req, res) => {
         userlist.push(user);
         fs.writeFile('./userlist.json', JSON.stringify(userlist,null,2), (err) => {
             if (err) throw err;
-            res.redirect('/')
+            res.redirect('/list')
         })
     });
 });
@@ -78,7 +127,7 @@ app.post('/update/:id', (req, res) => {
         userlist[index] = user;
         fs.writeFile('./userlist.json', JSON.stringify(userlist, null, 2), (err) => {
             if (err) throw err;
-            res.redirect('/')
+            res.redirect('/list')
         })
     });
 });
