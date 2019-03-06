@@ -1,17 +1,20 @@
 html
     head
         body
-            h1 Update Information for #{user.name} 
+            h1 Update Information for #{user.firstName} #{user.lastName} 
             form(action="/update/"+user.uid, method="post", id='form')
                 div
-                    label(form='userID') User ID
-                    input(name='userID', type='text' id='userID' value=user.userId)
+                    label(form='userId') User ID
+                    input(name='userId', type='text', id='userId', value=user.userId)
                 div
-                    label(form='name') Name
-                    input(name='name', type='text' id='name', value=user.name)
+                    label(form='firstName') First Name
+                    input(name='firstName', type='text', id='firstName', value=user.firstName)
+                div
+                    label(form='lastName') Last Name
+                    input(name='lastName', type='text', id='lastName', value=user.lastName)
                 div
                     label(form='age') Age
-                    input(name='age', type='number' id='age', value=user.age)
+                    input(name='age', type='number', id='age', value=user.age)
                 div
                     label(form='email') Email
                     input(name='email', type='email', id='email', value=user.email)

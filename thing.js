@@ -3,9 +3,6 @@ const path =require('path');
 const fs = require('fs');
 const passport = require('passport');
 const session = require('express-session');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-
-const router = express.Router();
 
 let app = express();
 
@@ -28,28 +25,6 @@ passport.deserializeUser((user, done) => {
     done(null, user);
 });
 
-passport.use(new GoogleStrategy({
-//options
-clientID:'332058658540-8er12kv1rjc1ut4pkn8pklcr74e350ve.apps.googleusercontent.com',
-clientSecret: 'EOUjH3cr-VusNi-D1q8Sg9pA',
-callbackURL: 'http://localhost:3000/auth/google/callback'
-}, (req, accessToken, refreshToken, profile, done) => {
-    //callback
-    done(null, profile);
-}));
-
-router.route('/google/callback')
-.get(passport.authenticate('google',{
-    successRedirect: '/list',
-    failure: '/'
-}));
-
-router.route('/google')
-.get(passport.authenticate('google',{
-    scope: ['profile']
-}))
-
-app.use('/auth', router);
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -62,6 +37,27 @@ app.get('/', (req, res) => {
     })
 });
 
+app.get('/sort/:attribute', (req, res) => {
+    fs.readFile('./userlist.json', (err, data) => {
+        let att = req.params.attribute
+        console.log(att);
+        if (err) throw err;
+        let userlist = JSON.parse(data);
+        let sortedlist = userlist.sort((a, b) => {
+            const usera = a[att].toUpperCase();
+            const userb = b[att].toUpperCase();
+
+            let comparison = 0;
+            if (usera > userb) {
+                comparison = 1;
+            } else if (usera < userb) {
+                comparison = -1;
+            }
+            return comparison;
+        })
+        res.render('list', { list: sortedlist });
+    })
+});
 
 
 app.get('/delete/:id', (req, res) => {
@@ -88,24 +84,16 @@ app.get('/edit/:id', (req, res) => {
     })
 })
 
-// app.get('/', (req, res) => {
-//     res.render('list');
-// })
-
 app.get('/form', (req, res) => {
     res.render('form');
 })
-
-// app.get('/logout', (req,res) => {
-//     req.logout();
-//     res.redirect('/');
-// })
 
 app.post('/create', (req, res) => {
     let user = {
         uid: Math.floor(Math.random()*1000).toString(),
         userId: req.body.userID,
-        name: req.body.name,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
         email: req.body.email,
         age: req.body.age
     };
@@ -121,17 +109,26 @@ app.post('/create', (req, res) => {
 });
 
 app.post('/search', (req, res) => {
-        let searchTerm = req.body.search
+        let searchTerm = req.body.search.toLowerCase();
     fs.readFile('./userlist.json', (err, data) => {
         if (err) throw err;
         let userlist = JSON.parse(data);
         let filteredList = [];
         userlist.forEach(user => {
-            if(user.name === searchTerm){
+            let name = user.firstName +' '+ user.lastName;
+            if(name.toLowerCase().includes(searchTerm)) {
                 filteredList.push(user);
             }
         })
-        res.render('list', { list: filteredList });
+        if(filteredList.length != 0){
+            let term;
+                if(searchTerm.length){
+                    term = `filtered on ${searchTerm}`;
+                }
+            res.render('list', { list: filteredList, term: term });
+        } else {
+            res.render('list', { list: userlist, term: "Results not found" });
+        }
     })
 });
 
@@ -139,8 +136,9 @@ app.post('/update/:id', (req, res) => {
     let uid = req.params.id
     let user = {
         uid: uid,
-        userId: req.body.userID,
-        name: req.body.name,
+        userId: req.body.userId,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
         email: req.body.email,
         age: req.body.age
     };

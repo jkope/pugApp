@@ -1,37 +1,50 @@
 [
   {
-    "uid": "550",
-    "userId": "Jakekoe",
-    "name": "Jacob Kopenhefer",
-    "email": "jacob@jeppsdesign.com",
+    "uid": "470",
+    "userId": "Jakekope",
+    "firstName": "Jacob",
+    "lastName": "Kopenhefer",
+    "email": "thisoldjake@gmail.com",
     "age": "33"
   },
   {
-    "uid": "703",
-    "userId": "Next",
-    "name": "Nester",
-    "email": "nester@next",
-    "age": "74"
+    "uid": "974",
+    "userId": "Hulk",
+    "firstName": "Bruce",
+    "lastName": "Banner",
+    "email": "meangreen@hulk.com",
+    "age": "42"
   },
   {
-    "uid": "737",
-    "userId": "this GUy1!",
-    "name": "This",
-    "email": "this@guy",
-    "age": "44"
+    "uid": "274",
+    "userId": "IronMan",
+    "firstName": "Tony",
+    "lastName": "Stark",
+    "email": "steelytony@starkenterprises.com",
+    "age": "42"
   },
   {
-    "uid": "311",
-    "userId": "super",
-    "name": "user",
-    "email": "we@res",
-    "age": "88"
+    "uid": "993",
+    "userId": "greenLight",
+    "firstName": "Alan",
+    "lastName": "Scott",
+    "email": "gogreen@lantern.com",
+    "age": "70"
   },
   {
-    "uid": "996",
-    "userId": "this GUy1!",
-    "name": "Jacob Kopenhefer",
-    "email": "jacob@jeppsdesign.com",
-    "age": "55"
+    "uid": "593",
+    "userId": "superMan",
+    "firstName": "Clark",
+    "lastName": "Kent",
+    "email": "supman@krypton.com",
+    "age": "34"
+  },
+  {
+    "uid": "82",
+    "userId": "Batman",
+    "firstName": "Bruce",
+    "lastName": "Wayne",
+    "email": "BattyBoy69@gmail.com",
+    "age": "32"
   }
 ]

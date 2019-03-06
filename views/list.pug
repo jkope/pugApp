@@ -2,31 +2,37 @@ html
     head
         body
             h1 List of Users
-            div()
-                a(href='./form', font-weight='bold',style={'background-color':'lightblue','padding':'5px'}) Add User
-                form(action="./search", method='post' id='form')
+            div
+                //- a(href='/form', font-weight='bold',style={'background-color':'lightblue','padding':'5px'}) Add User
+                form(action="/search", method='post' id='form')
                     div
-                        label(form='search') Search by Name:
+                        label(form='search') Filter on Name:
                         input(name='search', type='text' id='search')
-                        div
-                            input(type='submit', value='Search')
-                a(href='./', font-weight='bold',style={'background-color':'grey','padding':'5px'}) Clear Search
-            table(style={'table-layout':'fixed', 'width':'100%', 'border-collapse':'collapse', 'border':'3px solid blue'} )
+                        p=term
+                    button
+                        a(href='/form') Add User
+            table(style={'table-layout':'fixed', 'width':'100%', 'border-collapse':'collapse', 'border':'3px solid blue','text-align':'left'} )
                 tr
-                    th User ID
-                    th Name 
-                    th Age 
-                    th Email Address 
+                    th 
+                        a(href='/sort/userId') User ID
+                    th 
+                        a(href='/sort/firstName') First Name 
+                    th 
+                        a(href='/sort/lastName') Last Name
+                    th
+                        a(href='/sort/age') Age 
+                    th 
+                        a(href='/sort/email') Email Address 
                     th  
                     th  
                 each user in list
                     tr
                         td=user.userId
-                        td=user.name 
+                        td=user.firstName
+                        td=user.lastName 
                         td=user.age
                         td=user.email
                         td
-                            a(href='./delete/'+ user.uid) Delete
+                            a(href='/delete/'+ user.uid) Delete
                         td
-                            a(href='./edit/'+user.uid) Edit 
-            //- a(href='/logout') Log Out
+                            a(href='/edit/'+user.uid) Edit 
