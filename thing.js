@@ -29,7 +29,7 @@ passport.deserializeUser((user, done) => {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-app.get('/', (req, res) => {
+app.get('/', (req, res) => { //moved
     fs.readFile('./userlist.json', (err, data)=>{
         if (err) throw err;
         let userlist = JSON.parse(data);
@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
     })
 });
 
-app.get('/sort/:attribute', (req, res) => {
+app.get('/sort/:attribute', (req, res) => { //moved
     fs.readFile('./userlist.json', (err, data) => {
         let att = req.params.attribute
         console.log(att);
@@ -60,7 +60,7 @@ app.get('/sort/:attribute', (req, res) => {
 });
 
 
-app.get('/delete/:id', (req, res) => {
+app.get('/delete/:id', (req, res) => { //moved
     let id = req.params.id
     fs.readFile('./userlist.json', (err, data) => {
         if (err) throw err;
@@ -84,11 +84,11 @@ app.get('/edit/:id', (req, res) => {
     })
 })
 
-app.get('/form', (req, res) => {
+app.get('/form', (req, res) => { //moved
     res.status(200).render('form');
 })
 
-app.post('/create', (req, res) => {
+app.post('/create', (req, res) => { //moved
     let user = {
         uid: Math.floor(Math.random()*1000).toString(),
         userId: req.body.userID,
