@@ -20,8 +20,8 @@
     "userId": "IronMan",
     "firstName": "Tony",
     "lastName": "Stark",
-    "email": "steelytony@starkenterprises.com",
-    "age": "42"
+    "email": "tony@Stuff.com",
+    "age": "33"
   },
   {
     "uid": "993",
@@ -46,5 +46,21 @@
     "lastName": "Wayne",
     "email": "BattyBoy69@gmail.com",
     "age": "32"
+  },
+  {
+    "uid": "793",
+    "userId": "unEdited",
+    "firstName": "testing",
+    "lastName": "tester",
+    "email": "test@test",
+    "age": "33"
+  },
+  {
+    "uid": "812",
+    "userId": "delete",
+    "firstName": "testing",
+    "lastName": "tester",
+    "email": "test@test",
+    "age": "33"
   }
 ]

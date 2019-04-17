@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
     fs.readFile('./userlist.json', (err, data)=>{
         if (err) throw err;
         let userlist = JSON.parse(data);
-        res.render('list', {list: userlist});
+        res.status(200).render('list', {list: userlist});
     })
 });
 
@@ -80,12 +80,12 @@ app.get('/edit/:id', (req, res) => {
         if (err) throw err;
         let userlist = JSON.parse(data);
         let index = userlist.findIndex(user => user.uid === id);
-        res.render('edit', {user: userlist[index]})
+        res.status(200).render('edit', {user: userlist[index]})
     })
 })
 
 app.get('/form', (req, res) => {
-    res.render('form');
+    res.status(200).render('form');
 })
 
 app.post('/create', (req, res) => {
@@ -103,7 +103,7 @@ app.post('/create', (req, res) => {
         userlist.push(user);
         fs.writeFile('./userlist.json', JSON.stringify(userlist,null,2), (err) => {
             if (err) throw err;
-            res.redirect('/')
+            res.status(200).redirect('/')
         })
     });
 });
@@ -149,12 +149,15 @@ app.post('/update/:id', (req, res) => {
         userlist[index] = user;
         fs.writeFile('./userlist.json', JSON.stringify(userlist, null, 2), (err) => {
             if (err) throw err;
-            res.redirect('/')
+            res.status(200).redirect('/')
         })
     });
 });
 
 
-app.listen(3000, () => {
+let server = app.listen(3000, () => {
     console.log('listening on port 3000');
 });
+
+
+module.exports = server;
