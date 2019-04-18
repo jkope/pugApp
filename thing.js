@@ -74,7 +74,7 @@ app.get('/delete/:id', (req, res) => { //moved
     })
 })
 
-app.get('/edit/:id', (req, res) => {
+app.get('/edit/:id', (req, res) => { //moved
     let id = req.params.id
     fs.readFile('./userlist.json', (err, data) => {
         if (err) throw err;
@@ -108,7 +108,7 @@ app.post('/create', (req, res) => { //moved
     });
 });
 
-app.post('/search', (req, res) => {
+app.post('/search', (req, res) => { //moved
         let searchTerm = req.body.search.toLowerCase();
     fs.readFile('./userlist.json', (err, data) => {
         if (err) throw err;

@@ -1,8 +1,12 @@
 const express = require('express'); 
+const path = require('path');
 const app = express(); 
 const port = process.env.PORT || 8080; 
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
 
 const mongoose = require('mongoose'); 
 mongoose.connect('mongodb://localhost/userManagement', 
@@ -14,9 +18,10 @@ db.once('open', function () {   console.log('db connected');
 });
 
 const userSchema = new mongoose.Schema({ 
+    userId: String,
     firstName: String, 
     lastName: String, 
-    age: {type: Number, min: 18, max: 70 },
+    age: {type: Number, min: 1, max: 130 },
     email: String,
     createdDate: { type: Date, default: Date.now } });
 
@@ -33,8 +38,7 @@ app.get('/form', (req, res) => {
 app.get('/', (req, res) => {
     user.find({}, (err, data) => {
         if (err) return console.log(`Oops! ${err}`);
-        console.log(`data -- ${JSON.stringify(data)}`);
-        let userlist = JSON.parse(data);
+        let userlist = (data);
         res.status(200).render('list', { list: userlist });
     }); 
 });
@@ -42,35 +46,30 @@ app.get('/', (req, res) => {
 //Sort
 // you can test his with `curl http://localhost:8080/sort/firstName`
 app.get('/sort/:attribute', (req, res) => {
-    user.find({}, (err, data) => {
-        let att = req.params.attribute
+    let att = req.params.attribute
+    let order = 
+    console.log(att)
+    user.find({$query:{},$sort:{[att]: -1}}, (err, data) => {
         if (err) return console.log(`Oops! ${err}`);
-        console.log(`data -- ${JSON.stringify(data)}`);
-        console.log(data);
-        let userlist = JSON.parse(data);
-        let sortedlist = userlist.sort((a, b) => {
-            const usera = a[att].toUpperCase();
-            const userb = b[att].toUpperCase();
-
-            let comparison = 0;
-            if (usera > userb) {
-                comparison = 1;
-            } else if (usera < userb) {
-                comparison = -1;
-            }
-            return comparison;
-        })
-        res.render('list', { list: sortedlist });
+        console.log(data)
+        res.render('list', { list: data });
     }); 
 });
 
+app.get('/edit/:id', (req, res) => {
+    let id = req.params.id
+    user.findOne({userId: id}, (err,data) =>{
+        if (err) return console.log(`Oops! ${err}`);
+        res.status(200).render('edit', {user: data})
+    })
+})
+
 //Delete --find one and then remove the document
-// `curl  http://localhost:8080/delete/{--mongoID--}`
+// `curl  http://localhost:8080/delete/{--userId--}`
 app.get('/delete/:id', (req, res) => {
-    console.log(`POST /removeUser:`);
     let matchedId = req.params.id;
     user.findOneAndDelete(
-        { _id: matchedId },
+        { userId: matchedId },
         (err, data) => {
             if (err) return console.log(`Oops! ${err}`);
             res.redirect('/')
@@ -80,59 +79,74 @@ app.get('/delete/:id', (req, res) => {
 
 
 //Create
-//  test this with`curl --data "name=Peter&role=Student" http://localhost:8080/newUser`
-app.post('/newUser', (req, res) => {
+//  test this with `curl --data "userId=surfer&firstName=Jake&lastName=Kopes&email=email@gmail.com&age=23" http://localhost:8080/newUser`
+app.post('/create', (req, res) => {
     console.log(`POST /newUser: ${JSON.stringify(req.body)}`); 
     const newUser = new user(); 
+    newUser.userId = req.body.userID,
     newUser.firstName = req.body.firstName,
     newUser.lastName = req.body.lastName,
     newUser.email = req.body.email,
     newUser.age = req.body.age
-
 
     newUser.save((err, data) => { 
         if (err) { 
             return console.error(err); 
         } 
         console.log(`new user save: ${data}`); 
-        res.send(`done ${data}`); 
+        res.status(200).redirect('/')
     }); 
 });
 
-//Read
-//  you can test his with `curl http://localhost:8080/user/Peter`
-app.get('/user/:name', (req, res) => { 
-    let userName = req.params.name; 
-    console.log(`GET /user/:name: ${JSON.stringify(req.params)}`); 
-    user.findOne({ name: userName }, (err, data) => { 
+//Search
+app.post('/search', (req, res) => { 
+        let name = req.body.search 
+    user.find({$or:[{firstName: name},{lastName: name}] }, (err, data) => { 
         if (err) return console.log(`Oops! ${err}`); 
         console.log(`data -- ${JSON.stringify(data)}`); 
-        let returnMsg = `user name : ${userName} role : ${data.role}`; 
+        term = `filtered on ${name}`;
+        let returnMsg = `searchterm : ${name} role : ${data}`; 
         console.log(returnMsg); 
-        res.send(returnMsg); 
+        res.render('list', { list: data, term: term });
     }); 
 });
 
 
 //Update --find one and then update the document
 //  test this with: `curl --data "name=Jack&role=TA" http://localhost:8080/updateUserRole`
-app.post('/updateUserRole', (req, res) => {   
-    console.log(`POST /updateUserRole: ${JSON.stringify(req.body)}`);   
-    let matchedName = req.body.name;   
-    let newrole = req.body.role;   
-    user.findOneAndUpdate( {name: matchedName}, {role: newrole},       
+app.post('/update/:id', (req, res) => {
+    let id = req.params.id
+    const updatedUser = {
+    userId: req.body.userId,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    email: req.body.email,
+    age: req.body.age
+    }
+    user.findOneAndUpdate( {userId: id}, updatedUser,       
         { new: true }, //return the updated version instead of the pre-updated document       
         (err, data) => {           
             if (err) return console.log(`Oops! ${err}`);           
-            console.log(`data -- ${data.role}`)           
-            let returnMsg = `user name : ${matchedName} New role : ${data.role}`;           
+            console.log(`data -- ${updatedUser}`)           
+            let returnMsg = `user name : ${id} New data : ${updatedUser}`;           
             console.log(returnMsg);           
-            res.send(returnMsg);       
+            res.status(200).redirect('/')     
         });
 });
 
 
-app.listen(port, (err) => { 
+
+
+
+
+
+
+
+
+
+let server = app.listen(port, (err) => { 
     if (err) console.log(err); 
     console.log(`App Server listen on port: ${port}`);
  });
+
+module.exports = server;
