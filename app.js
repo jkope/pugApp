@@ -48,7 +48,6 @@ app.get('/', (req, res) => {
 //Sort
 app.get('/sort/:attribute', (req, res) => {
     let att = req.params.attribute
-    let upDown;
     order === 1 ? order = -1 : order = 1;  
     user.find().sort({ [att]: order }).exec((err, data) => {
         if (err) return console.log(`Oops! ${err}`);
@@ -86,7 +85,7 @@ app.post('/create', (req, res) => {
         newUser.userId = req.body.userID.toUpperCase(),
         newUser.firstName = req.body.firstName.toUpperCase(),
         newUser.lastName = req.body.lastName.toUpperCase(),
-        newUser.email = req.body.email.toUpperCase(),
+        newUser.email = req.body.email.toLowerCase(),
         newUser.age = req.body.age.toUpperCase()
         
         newUser.save((err, data) => {
@@ -123,7 +122,7 @@ app.post('/update/:id', (req, res) => {
         userId: req.body.userId.toUpperCase(),
         firstName: req.body.firstName.toUpperCase(),
         lastName: req.body.lastName.toUpperCase(),
-        email: req.body.email.toUpperCase(),
+        email: req.body.email.toLowerCase(),
         age: req.body.age.toUpperCase()
     }
     user.findOneAndUpdate({ userId: id }, updatedUser,
